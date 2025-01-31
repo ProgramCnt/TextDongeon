@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace TextDongeon
 {
@@ -15,6 +16,7 @@ namespace TextDongeon
         public float Defense { get; set; }
         public float Health { get; set; }
         public float Gold { get; set; }
+        public List<Item> Items { get; set; }
 
         public Character()
         {
@@ -23,6 +25,7 @@ namespace TextDongeon
             Defense = 5;
             Health = 100;
             Gold = 1500;
+            Items = new List<Item>();
         }
         public Character(string userName, string className)
         {
@@ -33,6 +36,7 @@ namespace TextDongeon
             Defense = 5;
             Health = 100;
             Gold = 1500;
+            Items = new List<Item>();
         }
 
         public Character setCharacter()

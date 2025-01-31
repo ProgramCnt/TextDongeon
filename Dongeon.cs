@@ -11,6 +11,5 @@ namespace TextDongeon
             character = character.setCharacter();
             menu.MainMenuList(character);
         }
-
     }
 }

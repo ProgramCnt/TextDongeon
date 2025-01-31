@@ -40,9 +40,12 @@ namespace TextDongeon
                 {
                     switch (userSelect)
                     {
-                        case 1:CheckStatus(character);
+                        case 1:
+                            CheckStatus(character);
                             break;
-                        case 2:break;
+                        case 2:
+                            CheckInventory(character);
+                            break;
                         case 3:break;
                     }
                 } 
@@ -98,7 +101,59 @@ namespace TextDongeon
 
         public void CheckInventory(Character character)
         {
+            int userSelect = 0;
+            Console.Clear();
+            Console.WriteLine("인벤토리");
+            Console.WriteLine("보유 중인 아이템을 관리할 수 있습니다.\n");
+            Console.WriteLine("[아이템 목록]");
+            Console.WriteLine("");
+            if (character.Items.Count != 0)
+            {
+                Console.WriteLine("1. 장착 관리");
+                Console.WriteLine("0. 나가기");
+            }
+            else
+            {
+                Console.WriteLine("1. 장착 관리(장비 없음)");
+                Console.WriteLine("0. 나가기");
+            }
+            Console.WriteLine("");
+            util.PrintUserChoice(0);
+            while (true)
+            {
+                try
+                {
+                    userSelect = int.Parse(Console.ReadLine().ToString());
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("숫자를 입력해주세요.\n");
+                    Console.Write(">>");
+                    continue;
+                }
+                if (userSelect == 0)
+                {
+                    MainMenuList(character);
+                }
+                else if (userSelect == 1)
+                {
+                    if (character.Items.Count != 0)
+                    {
 
+                    }
+                    else
+                    {
+                        Console.WriteLine("장착 관리할 아이템이 없습니다.");
+                    }
+                    //장비 장착관리 함수 구현 필요
+                }
+                else
+                {
+                    Console.WriteLine("지정된 범위를 벗어났습니다.\n");
+                    Console.Write(">>");
+                    continue;
+                }
+            }
         }
     }
 
