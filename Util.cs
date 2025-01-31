@@ -37,5 +37,15 @@ namespace TextDongeon
                 Console.Write(">>");
             }
         }
+
+        public string GetMenuNameKorean(string enumMenu)
+        {
+            return enumMenu
+                .Replace("Status", "상태 보기")
+                .Replace("Inventory", "인벤토리")
+                .Replace("ItemShop", "상점")
+                .Replace("GoDongeon", "던전입장")
+                .Replace("Rest", "휴식하기");
+        }
     }
 }

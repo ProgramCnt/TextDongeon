@@ -4,18 +4,13 @@ namespace TextDongeon
 {
     internal class TextDongeon
     {
-
         private static void Main(string[] args)
         {
             Character character = new Character();
+            Menu menu = new Menu();
             character = character.setCharacter();
-        }
-
-        public void GoStatus()
-        {
-            Console.WriteLine("");
+            menu.MainMenuList(character);
         }
 
     }
-
 }
