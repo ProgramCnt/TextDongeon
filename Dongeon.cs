@@ -6,9 +6,9 @@ namespace TextDongeon
     {
         private static void Main(string[] args)
         {
-            Character character = new Character();
             Menu menu = new Menu();
-            character = character.setCharacter();
+            Character character = new Character();
+            character = menu.setCharacter();
             menu.MainMenuList(character);
         }
     }
