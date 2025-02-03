@@ -17,6 +17,9 @@ namespace TextDongeon
         public float Health { get; set; }
         public float Gold { get; set; }
         public List<Item> Items { get; set; }
+        //도전에 사용할 것
+        public bool WeaponEqipment { get; set; }
+        public bool ArmerEqipment { get; set; }
 
         public Character()
         {
@@ -27,6 +30,7 @@ namespace TextDongeon
             Gold = 1500;
             Items = new List<Item>();
         }
+
         public Character(string userName, string className)
         {
             Level = 1;
@@ -39,5 +43,32 @@ namespace TextDongeon
             Items = new List<Item>();
         }
 
+        public void AddItem(Item item)
+        {
+            Items.Add(item);
+        }
+
+        public void RemoveItem(Item item)
+        {
+            Items.Remove(item);
+        }
+
+        //장비 장착시키기
+        //도전단계에서 무기,방어구 하나씩 끼울 수 있게 구현
+        public void EquipItem(Item item)
+        {
+            if (!item.IsEquip)
+            {
+                item.IsEquip = true;
+            }
+        }
+
+        public void UnEquipItem(Item item)
+        {
+            if (item.IsEquip)
+            {
+                item.IsEquip = false;
+            }
+        }
     }
 }
