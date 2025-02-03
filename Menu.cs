@@ -7,9 +7,10 @@ using System.Collections.Generic;
 
 namespace TextDongeon
 {
-    internal class Menu
+    public class Menu
     {
         Util util = new Util();
+        List<Item> shopItems = new List<Item>();
 
         public void MainMenuList(Character character)
         {
@@ -47,7 +48,13 @@ namespace TextDongeon
                         case 2:
                             CheckInventory(character);
                             break;
-                        case 3: break;
+                        case 3:
+                            ShoppingWeapons(character);
+                            break;
+                        case 4:
+                            break;
+                        case 5:
+                            break;
                     }
                 }
                 else
@@ -344,7 +351,7 @@ namespace TextDongeon
             Console.WriteLine($"{character.Gold} G");
             Console.WriteLine("");
             Console.WriteLine("[아이템 목록]");
-            foreach (Item item in character.Items)
+            foreach (Item item in shopItems)
             {
                 string status;
                 if (item.Stat <= 0)
@@ -356,12 +363,82 @@ namespace TextDongeon
                     status = "+" + item.Stat.ToString();
                 }
 
-                Console.WriteLine($" - {item.Name,-8} | {item.Type} {status} | {item.Description} | {item.Price}");
+                Console.WriteLine($" - {item.Name,-8} | {item.Type} {status} | {item.Description,-30} | {item.Price}");
             }
             Console.WriteLine("");
             Console.WriteLine("1. 아이템 구매");
             Console.WriteLine("0. 나가기");
             util.PrintUserChoice();
+            while (true)
+            {
+                try
+                {
+                    userSelect = int.Parse(Console.ReadLine().ToString());
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("잘못된 입력입니다.\n");
+                    Console.Write(">>");
+                    continue;
+                }
+                if (userSelect == 0)
+                {
+                    MainMenuList(character);
+                    break;
+                }
+                else if (userSelect <= character.Items.Count)
+                {
+                    //if ()
+                    //{
+                        
+                    //}
+                    //else
+                    //{
+                        
+                    //}
+                }
+                else
+                {
+                    Console.WriteLine("잘못된 입력입니다.\n");
+                    Console.Write(">>");
+                    continue;
+                }
+            }
+        }
+
+        public void SetShopItemList(List<Item> items)
+        {
+            foreach (Item item in items)
+            {
+                shopItems.Add(item);
+            }
+        }
+
+        public void BuyItems(Character character)
+        {
+            int userSelect = 0;
+            int itemCount = 0;
+            Console.Clear();
+            Console.WriteLine("상점 - 아이템 구매");
+            Console.WriteLine("필요한 아이템을 얻을 수 있는 상점입니다.\n");
+            Console.WriteLine("[보유 골드]");
+            Console.WriteLine($"{character.Gold} G");
+            Console.WriteLine("");
+            Console.WriteLine("[아이템 목록]");
+            foreach (Item item in shopItems)
+            {
+                string status;
+                if (item.Stat <= 0)
+                {
+                    status = item.Stat.ToString();
+                }
+                else
+                {
+                    status = "+" + item.Stat.ToString();
+                }
+
+                Console.WriteLine($" - {++itemCount} {item.Name,-8} | {item.Type} {status} | {item.Description,-30} | {(item.isSold ? "구매완료" : item.Price + " G")}");
+            }
         }
     }
 
