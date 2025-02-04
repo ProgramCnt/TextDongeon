@@ -43,12 +43,20 @@ namespace TextDongeon
             Items = new List<Item>();
         }
 
-        public void AddItem(Item item)
+        public bool BuyItem(Item item)
         {
-            Items.Add(item);
+            if (Gold - item.Price >= 0)
+            {
+                Gold -= item.Price;
+                Items.Add(item);
+                return true;
+            }else
+            {
+                return false;
+            }
         }
-
-        public void RemoveItem(Item item)
+        //판매기능은 도전기능에서 구현하기
+        public void SellItem(Item item)
         {
             Items.Remove(item);
         }

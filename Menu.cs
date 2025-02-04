@@ -225,15 +225,8 @@ namespace TextDongeon
             Console.WriteLine("[아이템 목록]");
             foreach (Item item in character.Items)
             {
-                string status;
-                if (item.Stat <= 0)
-                {
-                    status = item.Stat.ToString();
-                }else
-                {
-                    status = "+" + item.Stat.ToString();
-                }
-                 
+                string status = util.ItemStatUtil(item);
+
                 Console.WriteLine($" -  {(item.IsEquip ? "[E]" : "")}{item.Name,-8} | {item.Type} {status} | {item.Description}");
             }
             Console.WriteLine("");
@@ -288,15 +281,7 @@ namespace TextDongeon
             Console.WriteLine("[아이템 목록]");
             foreach (Item item in character.Items)
             {
-                string status;
-                if (item.Stat <= 0)
-                {
-                    status = item.Stat.ToString();
-                }
-                else
-                {
-                    status = "+" + item.Stat.ToString();
-                }
+                string status = util.ItemStatUtil(item);
 
                 Console.WriteLine($" - {itemIndex + 1} {(item.IsEquip ? "[E]":"")} {item.Name,-8} | {item.Type} {status} | {item.Description}");
                 itemIndex++;
@@ -353,15 +338,7 @@ namespace TextDongeon
             Console.WriteLine("[아이템 목록]");
             foreach (Item item in shopItems)
             {
-                string status;
-                if (item.Stat <= 0)
-                {
-                    status = item.Stat.ToString();
-                }
-                else
-                {
-                    status = "+" + item.Stat.ToString();
-                }
+                string status = util.ItemStatUtil(item);
 
                 Console.WriteLine($" - {item.Name,-8} | {item.Type} {status} | {item.Description,-30} | {item.Price}");
             }
@@ -427,15 +404,7 @@ namespace TextDongeon
             Console.WriteLine("[아이템 목록]");
             foreach (Item item in shopItems)
             {
-                string status;
-                if (item.Stat <= 0)
-                {
-                    status = item.Stat.ToString();
-                }
-                else
-                {
-                    status = "+" + item.Stat.ToString();
-                }
+                string status = util.ItemStatUtil(item);
 
                 Console.WriteLine($" - {++itemCount} {item.Name,-8} | {item.Type} {status} | {item.Description,-30} | {(item.isSold ? "구매완료" : item.Price + " G")}");
             }

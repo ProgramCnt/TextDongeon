@@ -52,5 +52,17 @@ namespace TextDongeon
             }
             return false;
         }
+
+        public string ItemStatUtil(Item item)
+        {
+            if (item.Stat <= 0)
+            {
+                return item.Stat.ToString();
+            }
+            else
+            {
+                return "+" + item.Stat.ToString();
+            }
+        }
     }
 }
