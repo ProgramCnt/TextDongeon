@@ -37,7 +37,8 @@ namespace TextDongeon
                 .Replace("Inventory", "인벤토리")
                 .Replace("ItemShop", "상점")
                 .Replace("GoDongeon", "던전입장")
-                .Replace("Rest", "휴식하기");
+                .Replace("Rest", "휴식하기")
+                .Replace("Save", "저장하기");
         }
 
         public bool IsWeapon(string type)
@@ -65,7 +66,7 @@ namespace TextDongeon
             }
         }
 
-        public int userSelectUtil(int start, int end)
+        public int UserSelectUtil(int start, int end)
         {
             while (true)
             {
@@ -81,6 +82,14 @@ namespace TextDongeon
                     Console.Write(">>");
                 }
             }
+        }
+
+        public string DifficultyToKorean(string difficulty)
+        {
+            return difficulty
+                .Replace("Easy", "쉬운")
+                .Replace("Normal", "일반")
+                .Replace("Hard", "어려운");
         }
     }
 }

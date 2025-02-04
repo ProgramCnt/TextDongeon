@@ -20,6 +20,7 @@ namespace TextDongeon
         //도전에 사용할 것
         public bool WeaponEqipment { get; set; }
         public bool ArmerEqipment { get; set; }
+        public int DongeonClear { get; set; }
 
         public Character()
         {
@@ -79,10 +80,28 @@ namespace TextDongeon
         //도전단계에서 무기,방어구 하나씩 끼울 수 있게 구현
         public void EquipItem(Item item)
         {
-            if (!item.IsEquip)
+            if (item.Type.Equals("공격력"))
             {
-                item.IsEquip = true;
+                foreach (Item weapon in Items)
+                {
+                    if (weapon.IsEquip && weapon.Type.Equals("공격력"))
+                    {
+                        weapon.IsEquip = false;
+                    }
+                }
+                AttackPower += item.Stat;
+            }else if (item.Type.Equals("방어력"))
+            {
+                foreach (Item armer in Items)
+                {
+                    if (armer.IsEquip && armer.Type.Equals("방어력"))
+                    {
+                        armer.IsEquip = false;
+                    }
+                }
+                Defense += item.Stat;
             }
+            item.IsEquip = true;
         }
 
         public void UnEquipItem(Item item)
@@ -90,12 +109,55 @@ namespace TextDongeon
             if (item.IsEquip)
             {
                 item.IsEquip = false;
+                if (item.Type.Equals("공격력"))
+                {
+                    AttackPower -= item.Stat;
+                }
+                else if (item.Type.Equals("방어력"))
+                {
+                    Defense -= item.Stat;
+                }
             }
         }
 
         public void Rest()
         {
             Health = 100;
+        }
+
+        public bool CheckLevelUp()
+        {
+            if (Level == DongeonClear)
+            {
+                DongeonClear = 0;
+                Level += 1;
+                AttackPower += (float)(0.5 * (Level - 1));
+                Defense += (Level - 1);
+                return true;
+            }
+            return false;
+        }
+
+        public float Damage(int difficulty, bool isFailed)
+        {
+            Random random = new Random();
+            int recommandArmer = difficulty * 5 + (difficulty - 1);
+            if (isFailed)
+            {
+                Health /= 2;
+            }
+            else
+            {
+                Health -= random.Next(20 - ((int)Defense - recommandArmer), 36 - ((int)Defense - recommandArmer));
+            }
+            return Health;
+        }
+
+        public float GetReward(int money)
+        {
+            Random random = new Random();
+            Gold += money + (money * ((float)random.Next((int)AttackPower,(int)(AttackPower * 2 + 1))/100));
+            return Gold;
         }
     }
 }

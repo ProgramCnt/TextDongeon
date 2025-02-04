@@ -13,6 +13,12 @@ namespace TextDongeon
         Character character;
         List<Item> shopItems = new List<Item>();
         string[] classList = { "전사", "도적" };
+        Dictionary<string, int> difficultyGold = new Dictionary<string, int>
+        {
+            { "Easy", 1000 },
+            { "Normal", 1700 },
+            { "Hard", 2500 }
+        };
 
         public void MainMenuList()
         {
@@ -54,6 +60,7 @@ namespace TextDongeon
                             ShoppingWeapons();
                             break;
                         case 4:
+                            EnterDongeon();
                             break;
                         case 5:
                             RestCharacter(0);
@@ -86,7 +93,7 @@ namespace TextDongeon
             Console.WriteLine("2.취소");
             util.PrintUserChoice();
 
-            choiceName = util.userSelectUtil(1, 2);
+            choiceName = util.UserSelectUtil(1, 2);
             switch (choiceName)
             {
                 case 1:
@@ -111,7 +118,7 @@ namespace TextDongeon
             }
             util.PrintUserChoice();
 
-            userSelect = util.userSelectUtil(1, classList.Length);
+            userSelect = util.UserSelectUtil(1, classList.Length);
             character = new Character(userName, classList[userSelect - 1]);
 
             MainMenuList();
@@ -159,7 +166,7 @@ namespace TextDongeon
             Console.WriteLine();
             util.PrintUserChoice();
 
-            userSelect = util.userSelectUtil(0, 0);
+            userSelect = util.UserSelectUtil(0, 0);
             if (userSelect == 0)
             {
                 MainMenuList();
@@ -192,7 +199,7 @@ namespace TextDongeon
             Console.WriteLine("");
             util.PrintUserChoice();
 
-            userSelect = util.userSelectUtil(0, 1);
+            userSelect = util.UserSelectUtil(0, 1);
             switch (userSelect)
             {
                 case 0:
@@ -222,7 +229,7 @@ namespace TextDongeon
             Console.WriteLine("0. 나가기");
             util.PrintUserChoice();
 
-            userSelect = util.userSelectUtil(0, character.Items.Count);
+            userSelect = util.UserSelectUtil(0, character.Items.Count);
             if (userSelect == 0)
             {
                 CheckInventory();
@@ -261,7 +268,7 @@ namespace TextDongeon
             Console.WriteLine("0. 나가기");
             util.PrintUserChoice();
 
-            userSelect = util.userSelectUtil(0, 2);
+            userSelect = util.UserSelectUtil(0, 2);
             switch (userSelect)
             {
                 case 0:
@@ -321,7 +328,7 @@ namespace TextDongeon
 
             util.PrintUserChoice();
             
-            userSelect = util.userSelectUtil(0, shopItems.Count);
+            userSelect = util.UserSelectUtil(0, shopItems.Count);
             if (userSelect == 0)
             {
                 ShoppingWeapons();
@@ -332,7 +339,7 @@ namespace TextDongeon
                 {
                     BuyItems(3);
                 }
-                if (character.BuyItem(shopItems[userSelect - 1]))
+                else if (character.BuyItem(shopItems[userSelect - 1]))
                 {
                     BuyItems(1);
                 }
@@ -370,7 +377,7 @@ namespace TextDongeon
 
             util.PrintUserChoice();
 
-            userSelect = util.userSelectUtil(0, character.Items.Count);
+            userSelect = util.UserSelectUtil(0, character.Items.Count);
             switch (userSelect)
             {
                 case 0:
@@ -405,7 +412,7 @@ namespace TextDongeon
             }
             util.PrintUserChoice();
 
-            userSelect = util.userSelectUtil(0, 1);
+            userSelect = util.UserSelectUtil(0, 1);
             switch (userSelect)
             {
                 case 0:
@@ -425,6 +432,114 @@ namespace TextDongeon
                     break;
             }
         }
+
+        public void EnterDongeon()
+        {
+            int userSelect = 0;
+            int dongeonCount = 0;
+            Console.Clear();
+            Console.WriteLine("던전입장");
+            Console.WriteLine("이곳에서 던전으로 들어가기전 활동을 할 수 있습니다.\n");
+            foreach (string enumName in Enum.GetNames(typeof(DongeonDifficulty)))
+            {
+                int difficultyLevel = (int)Enum.Parse(typeof(DongeonDifficulty), enumName);
+                int difficultyArmer = difficultyLevel * 5 + (difficultyLevel - 1);
+                Console.WriteLine($"{++dongeonCount}. {util.DifficultyToKorean(enumName)} 던전     | 방어력 {difficultyArmer} 이상 권장");
+            }
+            Console.WriteLine("0. 나가기");
+            Console.WriteLine("");
+            util.PrintUserChoice();
+
+            userSelect = util.UserSelectUtil(0,dongeonCount);
+            if(userSelect == 0)
+            {
+                MainMenuList();
+            }else
+            {
+                IsDongeonClear(userSelect);
+            }
+        }
+
+        public void IsDongeonClear(int difficulty)
+        {
+            Random random = new Random();
+            int RecommandDefense = difficulty * 5 + (difficulty - 1);
+            Console.WriteLine($"요구 방어력{RecommandDefense}");
+            if (character.Defense >= RecommandDefense)
+            {
+                DongeonClear(difficulty);
+            }
+            else
+            {
+                int randomClear = random.Next(9);
+                if (randomClear > 3)
+                {
+                    DongeonClear(difficulty);
+                }
+                else
+                {
+                    DongeonFailed(difficulty);
+                }
+            }
+        }
+
+        public void DongeonClear(int difficulty)
+        {
+            Random random = new Random();
+            int RecommandDefense = difficulty * 5 + (difficulty - 1);
+            int userSelect = 0;
+            int damage = 0;
+            string difficultyName = Enum.GetName(typeof(DongeonDifficulty), difficulty);
+            int reward = difficultyGold[difficultyName];
+
+            Console.Clear();
+            Console.WriteLine("던전 클리어");
+            Console.WriteLine("축하합니다!!");
+            Console.WriteLine($"{util.DifficultyToKorean(difficultyName)}던전을 클리어 하였습니다.\n");
+
+            character.DongeonClear++;
+            if (character.CheckLevelUp())
+            {
+                Console.WriteLine("축하합니다. 레벨업 하셨습니다!!");
+                Console.WriteLine($"현재 레벨은 {character.Level}입니다.");
+            }
+
+            Console.WriteLine("[탐험 결과]");
+            Console.WriteLine($"체력 {character.Health} -> {character.Damage(difficulty,false)}");
+            Console.WriteLine($"Gold {character.Gold} -> {character.GetReward(reward)}");
+            Console.WriteLine("");
+
+            Console.WriteLine("0. 나가기");
+            Console.WriteLine("");
+            util.PrintUserChoice();
+
+            userSelect = util.UserSelectUtil(0, 0);
+            if (userSelect == 0)
+            {
+                MainMenuList();
+            }
+        }
+
+        public void DongeonFailed(int difficulty)
+        {
+            int userSelect = 0;
+            Console.Clear();
+            Console.WriteLine("던전 클리어 실패");
+            Console.WriteLine("아깝습니다!!");
+            Console.WriteLine($"{util.DifficultyToKorean(Enum.GetName(typeof(DongeonDifficulty), difficulty))}던전 클리어에 실패하였습니다.\n");
+
+            character.Damage(difficulty, true);
+
+            Console.WriteLine("0. 나가기");
+            Console.WriteLine("");
+            util.PrintUserChoice();
+
+            userSelect = util.UserSelectUtil(0, 0);
+            if (userSelect == 0)
+            {
+                MainMenuList();
+            }
+        }
     }
 
     enum MenuList
@@ -433,7 +548,8 @@ namespace TextDongeon
         Inventory,
         ItemShop,
         GoDongeon,
-        Rest
+        Rest,
+        Save
     }
 
     enum BuyStatus
@@ -443,4 +559,12 @@ namespace TextDongeon
         NoGold,         //돈이 부족할때
         Sold            //이미 팔렸을때
     }
+
+    enum DongeonDifficulty
+    {
+        Easy = 1,
+        Normal,
+        Hard
+    }
+
 }
