@@ -43,12 +43,23 @@ namespace TextDongeon
             Items = new List<Item>();
         }
 
+        public void Additem(Item item)
+        {
+            Items.Add(item);
+        }
+
+        public void RemoveItem(Item item)
+        {
+            Items.Remove(item);
+        }
+
         public bool BuyItem(Item item)
         {
             if (Gold - item.Price >= 0)
             {
                 Gold -= item.Price;
-                Items.Add(item);
+                Additem(item);
+                item.isSold = true;
                 return true;
             }else
             {
@@ -58,7 +69,7 @@ namespace TextDongeon
         //판매기능은 도전기능에서 구현하기
         public void SellItem(Item item)
         {
-            Items.Remove(item);
+            RemoveItem(item);
         }
 
         //장비 장착시키기

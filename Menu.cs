@@ -10,9 +10,10 @@ namespace TextDongeon
     public class Menu
     {
         Util util = new Util();
+        Character character;
         List<Item> shopItems = new List<Item>();
 
-        public void MainMenuList(Character character)
+        public void MainMenuList()
         {
             int menuCount = 0;
             int userSelect = 0;
@@ -43,13 +44,13 @@ namespace TextDongeon
                     switch (userSelect)
                     {
                         case 1:
-                            CheckStatus(character);
+                            CheckStatus();
                             break;
                         case 2:
-                            CheckInventory(character);
+                            CheckInventory();
                             break;
                         case 3:
-                            ShoppingWeapons(character);
+                            ShoppingWeapons();
                             break;
                         case 4:
                             break;
@@ -74,7 +75,6 @@ namespace TextDongeon
 
             Util util = new Util();
 
-            Character character;
             util.PrintWelcome();
             Console.WriteLine("원하시는 이름을 설정해주세요.\n");
             userName = Console.ReadLine().ToString();
@@ -117,6 +117,18 @@ namespace TextDongeon
                             Console.WriteLine("잘못된 입력입니다.");
                             continue;
                         }
+                        switch (choiceClass)
+                        {
+                            case 1:
+                                className = "전사";
+                                break;
+                            case 2:
+                                className = "도적";
+                                break;
+                            default:
+                                Console.WriteLine("잘못된 입력입니다.");
+                                break;
+                        }
                         if (choiceClass == 1)
                         {
                             className = "전사";
@@ -150,7 +162,7 @@ namespace TextDongeon
             return character;
         }
 
-        public void CheckStatus(Character character)
+        public void CheckStatus()
         {
             int userSelect = 0;
             Console.Clear();
@@ -205,7 +217,7 @@ namespace TextDongeon
                 }
                 if (userSelect == 0)
                 {
-                    MainMenuList(character);
+                    MainMenuList();
                 }
                 else
                 {
@@ -216,7 +228,7 @@ namespace TextDongeon
             }
         }
 
-        public void CheckInventory(Character character)
+        public void CheckInventory()
         {
             int userSelect = 0;
             Console.Clear();
@@ -226,7 +238,6 @@ namespace TextDongeon
             foreach (Item item in character.Items)
             {
                 string status = util.ItemStatUtil(item);
-
                 Console.WriteLine($" -  {(item.IsEquip ? "[E]" : "")}{item.Name,-8} | {item.Type} {status} | {item.Description}");
             }
             Console.WriteLine("");
@@ -256,11 +267,11 @@ namespace TextDongeon
                 }
                 if (userSelect == 0)
                 {
-                    MainMenuList(character);
+                    MainMenuList();
                 }
                 else if (userSelect == 1)
                 {
-                    EquipmentManagement(character);
+                    EquipmentManagement();
                 }
                 else
                 {
@@ -271,7 +282,7 @@ namespace TextDongeon
             }
         }
 
-        public void EquipmentManagement(Character character)
+        public void EquipmentManagement()
         {
             int userSelect = 0;
             int itemIndex = 0;
@@ -282,7 +293,6 @@ namespace TextDongeon
             foreach (Item item in character.Items)
             {
                 string status = util.ItemStatUtil(item);
-
                 Console.WriteLine($" - {itemIndex + 1} {(item.IsEquip ? "[E]":"")} {item.Name,-8} | {item.Type} {status} | {item.Description}");
                 itemIndex++;
             }
@@ -303,7 +313,7 @@ namespace TextDongeon
                 }
                 if (userSelect == 0)
                 {
-                    CheckInventory(character);
+                    CheckInventory();
                     break;
                 }
                 else if (userSelect <= character.Items.Count)
@@ -315,7 +325,7 @@ namespace TextDongeon
                     {
                         character.EquipItem(character.Items[userSelect - 1]);
                     }
-                    EquipmentManagement(character);
+                    EquipmentManagement();
                 }
                 else
                 {
@@ -326,7 +336,7 @@ namespace TextDongeon
             }
         }
 
-        public void ShoppingWeapons(Character character)
+        public void ShoppingWeapons()
         {
             int userSelect = 0;
             Console.Clear();
@@ -339,7 +349,6 @@ namespace TextDongeon
             foreach (Item item in shopItems)
             {
                 string status = util.ItemStatUtil(item);
-
                 Console.WriteLine($" - {item.Name,-8} | {item.Type} {status} | {item.Description,-30} | {item.Price}");
             }
             Console.WriteLine("");
@@ -360,19 +369,12 @@ namespace TextDongeon
                 }
                 if (userSelect == 0)
                 {
-                    MainMenuList(character);
+                    MainMenuList();
                     break;
                 }
-                else if (userSelect <= character.Items.Count)
+                else if(userSelect == 1)
                 {
-                    //if ()
-                    //{
-                        
-                    //}
-                    //else
-                    //{
-                        
-                    //}
+                    BuyItems(0);
                 }
                 else
                 {
@@ -391,7 +393,7 @@ namespace TextDongeon
             }
         }
 
-        public void BuyItems(Character character)
+        public void BuyItems(int buyStat)
         {
             int userSelect = 0;
             int itemCount = 0;
@@ -405,8 +407,58 @@ namespace TextDongeon
             foreach (Item item in shopItems)
             {
                 string status = util.ItemStatUtil(item);
-
                 Console.WriteLine($" - {++itemCount} {item.Name,-8} | {item.Type} {status} | {item.Description,-30} | {(item.isSold ? "구매완료" : item.Price + " G")}");
+            }
+            Console.WriteLine("");
+            Console.WriteLine("0. 나가기");
+
+            switch (buyStat)
+            {
+                case 1:
+                    Console.WriteLine("");
+                    Console.WriteLine("구매를 완료했습니다.");
+                    break;
+                case 2:
+                    Console.WriteLine("");
+                    Console.WriteLine("Gold가 부족합니다.");
+                    break;
+            }
+
+            util.PrintUserChoice();
+            while (true)
+            {
+                try
+                {
+                    userSelect = int.Parse(Console.ReadLine().ToString());
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("잘못된 입력입니다.\n");
+                    Console.Write(">>");
+                    continue;
+                }
+                if (userSelect == 0)
+                {
+                    ShoppingWeapons();
+                    break;
+                }
+                else if (userSelect <= shopItems.Count)
+                {
+                    if (character.BuyItem(shopItems[userSelect - 1]))
+                    {
+                        BuyItems(1);
+                    }
+                    else
+                    {
+                        BuyItems(2);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("잘못된 입력입니다.\n");
+                    Console.Write(">>");
+                    continue;
+                }
             }
         }
     }
@@ -418,5 +470,12 @@ namespace TextDongeon
         ItemShop,
         GoDongeon,
         Rest
+    }
+
+    enum BuyItemStatus
+    {
+        Default = 0,    //처음 들어왔을 때
+        Buy,            //구매를 진행했을 때
+        NoGold          //돈이 부족할때
     }
 }
