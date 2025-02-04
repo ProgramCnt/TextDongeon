@@ -50,6 +50,8 @@ namespace TextDongeon
 
         public void RemoveItem(Item item)
         {
+            item.IsEquip = false;
+            item.isSold = false;
             Items.Remove(item);
         }
 
@@ -69,6 +71,7 @@ namespace TextDongeon
         //판매기능은 도전기능에서 구현하기
         public void SellItem(Item item)
         {
+            Gold += (float)(item.Price * 0.85);
             RemoveItem(item);
         }
 
@@ -88,6 +91,11 @@ namespace TextDongeon
             {
                 item.IsEquip = false;
             }
+        }
+
+        public void Rest()
+        {
+            Health = 100;
         }
     }
 }

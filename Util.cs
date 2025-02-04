@@ -64,5 +64,23 @@ namespace TextDongeon
                 return "+" + item.Stat.ToString();
             }
         }
+
+        public int userSelectUtil(int start, int end)
+        {
+            while (true)
+            {
+                int userSelect = 0;
+                int.TryParse(Console.ReadLine().ToString(), out userSelect);
+                if (userSelect >= start && userSelect <= end)
+                {
+                    return userSelect;
+                }
+                else
+                {
+                    Console.WriteLine("잘못된 입력입니다.");
+                    Console.Write(">>");
+                }
+            }
+        }
     }
 }

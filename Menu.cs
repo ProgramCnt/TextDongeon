@@ -12,6 +12,7 @@ namespace TextDongeon
         Util util = new Util();
         Character character;
         List<Item> shopItems = new List<Item>();
+        string[] classList = { "전사", "도적" };
 
         public void MainMenuList()
         {
@@ -55,6 +56,7 @@ namespace TextDongeon
                         case 4:
                             break;
                         case 5:
+                            RestCharacter(0);
                             break;
                     }
                 }
@@ -67,99 +69,52 @@ namespace TextDongeon
             }
         }
 
-        public Character setCharacter()
+        public void SetCharacterName()
         {
-            bool isFirst = true;
             string userName = "";
-            string className = "";
-
+            int choiceName = 0;
             Util util = new Util();
+            character = new Character();
 
+            Console.Clear();
             util.PrintWelcome();
             Console.WriteLine("원하시는 이름을 설정해주세요.\n");
             userName = Console.ReadLine().ToString();
 
-            while (true)
+            Console.WriteLine($"입력하신 이름은 {userName}입니다.\n");
+            Console.WriteLine("1.저장");
+            Console.WriteLine("2.취소");
+            util.PrintUserChoice();
+
+            choiceName = util.userSelectUtil(1, 2);
+            switch (choiceName)
             {
-                int choiceName = 0;
-                int choiceClass = 0;
-                Console.WriteLine($"입력하신 이름은 {userName}입니다.\n");
-                Console.WriteLine("1.저장");
-                Console.WriteLine("2.취소");
-                util.PrintUserChoice();
-                try
-                {
-                    choiceName = int.Parse(Console.ReadLine().ToString());
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("잘못된 입력입니다.");
-                    continue;
-                }
-
-                if (util.SelectRange(1, 2, choiceName) && choiceName == 1)
-                {
-                    //1번클릭시 직업 선택으로 넘어가기
-                    while (true)
-                    {
-                        Console.Clear();
-                        util.PrintWelcome();
-                        Console.WriteLine("원하시는 직업을 선택해주세요.\n");
-                        Console.WriteLine("1.전사");
-                        Console.WriteLine("2.도적");
-                        util.PrintUserChoice();
-                        try
-                        {
-                            choiceClass = int.Parse(Console.ReadLine().ToString());
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine("잘못된 입력입니다.");
-                            continue;
-                        }
-                        switch (choiceClass)
-                        {
-                            case 1:
-                                className = "전사";
-                                break;
-                            case 2:
-                                className = "도적";
-                                break;
-                            default:
-                                Console.WriteLine("잘못된 입력입니다.");
-                                break;
-                        }
-                        if (choiceClass == 1)
-                        {
-                            className = "전사";
-                        }
-                        else if (choiceClass == 2)
-                        {
-                            className = "도적";
-                        }
-                        else if (!util.SelectRange(1, 2, choiceClass))
-                        {
-                            continue;
-                        }
-                        break;
-                    }
-                    character = new Character(userName, className);
+                case 1:
+                    SetCharacterClass(userName);
                     break;
-                }
-                else if (choiceName == 2)
-                {
-                    //2번클릭시 이름 다시 설정하기
-                    Console.WriteLine("원하시는 이름을 설정해주세요.\n");
-                    userName = Console.ReadLine().ToString();
-                    continue;
-                }
-                else if (!util.SelectRange(1, 2, choiceName))
-                {
-                    Console.WriteLine("범위를 벗어난 선택입니다. 다시 입력해주세요.\n");
-                }
+                case 2:
+                    SetCharacterName();
+                    break;
             }
+        }
 
-            return character;
+        public void SetCharacterClass(string userName)
+        {
+            int classIndex = 0;
+            int userSelect = 0;
+            Console.Clear();
+            util.PrintWelcome();
+            Console.WriteLine("원하시는 직업을 설정해주세요.\n");
+            foreach (string className in classList)
+            {
+                Console.WriteLine($"{++classIndex}. {className}");
+            }
+            util.PrintUserChoice();
+
+            userSelect = util.userSelectUtil(1, classList.Length);
+            character = new Character(userName, classList[userSelect - 1]);
+
+            MainMenuList();
         }
 
         public void CheckStatus()
@@ -203,28 +158,11 @@ namespace TextDongeon
             Console.WriteLine("0. 나가기");
             Console.WriteLine();
             util.PrintUserChoice();
-            while (true)
+
+            userSelect = util.userSelectUtil(0, 0);
+            if (userSelect == 0)
             {
-                try
-                {
-                    userSelect = int.Parse(Console.ReadLine().ToString());
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("잘못된 입력입니다.\n");
-                    Console.Write(">>");
-                    continue;
-                }
-                if (userSelect == 0)
-                {
-                    MainMenuList();
-                }
-                else
-                {
-                    Console.WriteLine("잘못된 입력입니다.\n");
-                    Console.Write(">>");
-                    continue;
-                }
+                MainMenuList();
             }
         }
 
@@ -253,32 +191,16 @@ namespace TextDongeon
             }
             Console.WriteLine("");
             util.PrintUserChoice();
-            while (true)
+
+            userSelect = util.userSelectUtil(0, 1);
+            switch (userSelect)
             {
-                try
-                {
-                    userSelect = int.Parse(Console.ReadLine().ToString());
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("잘못된 입력입니다.\n");
-                    Console.Write(">>");
-                    continue;
-                }
-                if (userSelect == 0)
-                {
+                case 0:
                     MainMenuList();
-                }
-                else if (userSelect == 1)
-                {
+                    break;
+                case 1:
                     EquipmentManagement();
-                }
-                else
-                {
-                    Console.WriteLine("잘못된 입력입니다.\n");
-                    Console.Write(">>");
-                    continue;
-                }
+                    break;
             }
         }
 
@@ -299,40 +221,22 @@ namespace TextDongeon
             Console.WriteLine("");
             Console.WriteLine("0. 나가기");
             util.PrintUserChoice();
-            while (true)
+
+            userSelect = util.userSelectUtil(0, character.Items.Count);
+            if (userSelect == 0)
             {
-                try
+                CheckInventory();
+            }
+            else if (userSelect <= character.Items.Count)
+            {
+                if (character.Items[userSelect - 1].IsEquip)
                 {
-                    userSelect = int.Parse(Console.ReadLine().ToString());
-                }
-                catch (Exception ex)
+                    character.UnEquipItem(character.Items[userSelect - 1]);
+                }else
                 {
-                    Console.WriteLine("잘못된 입력입니다.\n");
-                    Console.Write(">>");
-                    continue;
+                    character.EquipItem(character.Items[userSelect - 1]);
                 }
-                if (userSelect == 0)
-                {
-                    CheckInventory();
-                    break;
-                }
-                else if (userSelect <= character.Items.Count)
-                {
-                    if (character.Items[userSelect - 1].IsEquip)
-                    {
-                        character.UnEquipItem(character.Items[userSelect - 1]);
-                    }else
-                    {
-                        character.EquipItem(character.Items[userSelect - 1]);
-                    }
-                    EquipmentManagement();
-                }
-                else
-                {
-                    Console.WriteLine("잘못된 입력입니다.\n");
-                    Console.Write(">>");
-                    continue;
-                }
+                EquipmentManagement();
             }
         }
 
@@ -349,39 +253,26 @@ namespace TextDongeon
             foreach (Item item in shopItems)
             {
                 string status = util.ItemStatUtil(item);
-                Console.WriteLine($" - {item.Name,-8} | {item.Type} {status} | {item.Description,-30} | {item.Price}");
+                Console.WriteLine($" - {item.Name,-8} | {item.Type} {status} | {item.Description,-30} | {(item.isSold ? "구매완료" : item.Price + " G")}");
             }
             Console.WriteLine("");
             Console.WriteLine("1. 아이템 구매");
+            Console.WriteLine("2. 아이템 판매");
             Console.WriteLine("0. 나가기");
             util.PrintUserChoice();
-            while (true)
+
+            userSelect = util.userSelectUtil(0, 2);
+            switch (userSelect)
             {
-                try
-                {
-                    userSelect = int.Parse(Console.ReadLine().ToString());
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("잘못된 입력입니다.\n");
-                    Console.Write(">>");
-                    continue;
-                }
-                if (userSelect == 0)
-                {
+                case 0:
                     MainMenuList();
                     break;
-                }
-                else if(userSelect == 1)
-                {
+                case 1:
                     BuyItems(0);
-                }
-                else
-                {
-                    Console.WriteLine("잘못된 입력입니다.\n");
-                    Console.Write(">>");
-                    continue;
-                }
+                    break;
+                case 2:
+                    SellItems(false);
+                    break;
             }
         }
 
@@ -393,7 +284,7 @@ namespace TextDongeon
             }
         }
 
-        public void BuyItems(int buyStat)
+        public void BuyItems(int buyStatus)
         {
             int userSelect = 0;
             int itemCount = 0;
@@ -412,7 +303,7 @@ namespace TextDongeon
             Console.WriteLine("");
             Console.WriteLine("0. 나가기");
 
-            switch (buyStat)
+            switch (buyStatus)
             {
                 case 1:
                     Console.WriteLine("");
@@ -422,43 +313,116 @@ namespace TextDongeon
                     Console.WriteLine("");
                     Console.WriteLine("Gold가 부족합니다.");
                     break;
+                case 3:
+                    Console.WriteLine("");
+                    Console.WriteLine("팔린 아이템입니다.");
+                    break;
             }
 
             util.PrintUserChoice();
-            while (true)
+            
+            userSelect = util.userSelectUtil(0, shopItems.Count);
+            if (userSelect == 0)
             {
-                try
+                ShoppingWeapons();
+            }
+            else if (userSelect <= shopItems.Count)
+            {
+                if (shopItems[userSelect - 1].isSold)
                 {
-                    userSelect = int.Parse(Console.ReadLine().ToString());
+                    BuyItems(3);
                 }
-                catch (Exception ex)
+                if (character.BuyItem(shopItems[userSelect - 1]))
                 {
-                    Console.WriteLine("잘못된 입력입니다.\n");
-                    Console.Write(">>");
-                    continue;
-                }
-                if (userSelect == 0)
-                {
-                    ShoppingWeapons();
-                    break;
-                }
-                else if (userSelect <= shopItems.Count)
-                {
-                    if (character.BuyItem(shopItems[userSelect - 1]))
-                    {
-                        BuyItems(1);
-                    }
-                    else
-                    {
-                        BuyItems(2);
-                    }
+                    BuyItems(1);
                 }
                 else
                 {
-                    Console.WriteLine("잘못된 입력입니다.\n");
-                    Console.Write(">>");
-                    continue;
+                    BuyItems(2);
                 }
+            }
+        }
+
+        public void SellItems(bool isSold)
+        {
+            int userSelect = 0;
+            int itemCount = 0;
+            Console.Clear();
+            Console.WriteLine("상점 - 아이템 구매");
+            Console.WriteLine("필요한 아이템을 얻을 수 있는 상점입니다.\n");
+            Console.WriteLine("[보유 골드]");
+            Console.WriteLine($"{character.Gold} G");
+            Console.WriteLine("");
+            Console.WriteLine("[아이템 목록]");
+            foreach (Item item in character.Items)
+            {
+                string status = util.ItemStatUtil(item);
+                Console.WriteLine($" - {++itemCount} {item.Name,-8} | {item.Type} {status} | {item.Description,-30} | {item.Price}");
+            }
+
+            if (isSold)
+            {
+                Console.WriteLine("아이템을 판매하였습니다.");
+            }
+
+            Console.WriteLine("");
+            Console.WriteLine("0. 나가기");
+
+            util.PrintUserChoice();
+
+            userSelect = util.userSelectUtil(0, character.Items.Count);
+            switch (userSelect)
+            {
+                case 0:
+                    ShoppingWeapons();
+                    break;
+                default :
+                    character.SellItem(character.Items[userSelect - 1]);
+                    SellItems(true);
+                    break;
+            }
+        }
+
+        public void RestCharacter(int buyStatus)
+        {
+            int userSelect = 0;
+            Console.Clear();
+            Console.WriteLine("휴식하기");
+            Console.WriteLine($"500 G 를 내면 체력을 회복할 수 있습니다. (보유 골드 : {character.Gold} G)\n");
+            Console.WriteLine("1. 휴식하기");
+            Console.WriteLine("0. 나가기");
+
+            switch (buyStatus)
+            {
+                case 1:
+                    Console.WriteLine("");
+                    Console.WriteLine("휴식을 완료했습니다.");
+                    break;
+                case 2:
+                    Console.WriteLine("");
+                    Console.WriteLine("Gold가 부족합니다.");
+                    break;
+            }
+            util.PrintUserChoice();
+
+            userSelect = util.userSelectUtil(0, 1);
+            switch (userSelect)
+            {
+                case 0:
+                    MainMenuList();
+                    break;
+                case 1:
+                    if (character.Gold >= 500)
+                    {
+                        character.Gold -= 500;
+                        character.Rest();
+                        RestCharacter(1);
+                    }
+                    else
+                    {
+                        RestCharacter(2);
+                    }
+                    break;
             }
         }
     }
@@ -472,10 +436,11 @@ namespace TextDongeon
         Rest
     }
 
-    enum BuyItemStatus
+    enum BuyStatus
     {
         Default = 0,    //처음 들어왔을 때
         Buy,            //구매를 진행했을 때
-        NoGold          //돈이 부족할때
+        NoGold,         //돈이 부족할때
+        Sold            //이미 팔렸을때
     }
 }

@@ -13,11 +13,8 @@ namespace TextDongeon
             {
                 shopList.Add(new Item(itemStr));
             }
-            menu.setCharacter();
             menu.SetShopItemList(shopList);
-            menu.MainMenuList();
-            
-
+            menu.SetCharacterName();
         }
     }
 }
