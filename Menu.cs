@@ -191,8 +191,24 @@ namespace TextDongeon
                     }
                 }
 
-                Console.WriteLine($"공격력 : {character.AttackPower + addAttackPower} ({(addAttackPower > 0 ? "+" : "")}{addAttackPower})");
-                Console.WriteLine($"방어력 : {character.Defense + addDefense} ({(addDefense > 0 ? "+" : "")}{addDefense})");
+                Console.Write($"공격력 : {character.AttackPower + addAttackPower} ");
+                if (addAttackPower != 0)
+                {
+                    Console.WriteLine($"({(addAttackPower > 0 ? "+" : "")}{addAttackPower})");
+                }
+                else
+                {
+                    Console.WriteLine("");
+                }
+                Console.Write($"방어력 : {character.Defense + addDefense} ");
+                if (addDefense != 0)
+                {
+                    Console.WriteLine($"({(addDefense > 0 ? "+" : "")}{addDefense})");
+                }
+                else
+                {
+                    Console.WriteLine("");
+                }
                 Console.WriteLine($"체 력 : {character.Health}");
             }
             else
@@ -234,7 +250,7 @@ namespace TextDongeon
             }
             else
             {
-                Console.WriteLine("1. 장착 관리(장비 없음)");
+                Console.WriteLine("1. 장착 관리");
                 Console.WriteLine("0. 나가기");
             }
             Console.WriteLine("");
@@ -391,7 +407,7 @@ namespace TextDongeon
                     break;
                 case 3:
                     Console.WriteLine("");
-                    Console.WriteLine("팔린 아이템입니다.");
+                    Console.WriteLine("이미 구매한 아이템입니다.");
                     break;
             }
 

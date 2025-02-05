@@ -17,9 +17,6 @@ namespace TextDongeon
         public float Health { get; set; }
         public float Gold { get; set; }
         public List<Item> Items { get; set; }
-        //도전에 사용할 것
-        public bool WeaponEqipment { get; set; }
-        public bool ArmerEqipment { get; set; }
         public int DongeonClear { get; set; }
 
         public Character()
