@@ -16,6 +16,10 @@ namespace TextDongeon
         public bool IsEquip { get; set; }
         public bool isSold { get; set; }
 
+        public Item()
+        {
+            
+        }
         public Item(string name, string description, string type, int stat, int price)
         {
             Name = name;

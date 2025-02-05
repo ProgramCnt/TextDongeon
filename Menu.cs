@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Text.Json;
 
 namespace TextDongeon
 {
@@ -13,6 +14,12 @@ namespace TextDongeon
         Character character;
         List<Item> shopItems = new List<Item>();
         string[] classList = { "전사", "도적" };
+        private static string folder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        private static string folderPath = Path.Combine(folder, "characterData");
+        private static string filePath = Path.Combine(folderPath, "character.json");
+        bool isSaved = false;
+        bool isLoad = false;
+
         Dictionary<string, int> difficultyGold = new Dictionary<string, int>
         {
             { "Easy", 1000 },
@@ -30,6 +37,12 @@ namespace TextDongeon
             foreach (string enumName in Enum.GetNames(typeof(MenuList)))
             {
                 Console.WriteLine($"{++menuCount}. {util.GetMenuNameKorean(enumName)}");
+            }
+            if (isSaved)
+            {
+                Console.WriteLine("");
+                Console.WriteLine("저장되었습니다.");
+                isSaved = false;
             }
             Console.WriteLine("");
             util.PrintUserChoice();
@@ -65,6 +78,9 @@ namespace TextDongeon
                         case 5:
                             RestCharacter(0);
                             break;
+                        case 6:
+                            SaveData();
+                            break;
                     }
                 }
                 else
@@ -79,30 +95,55 @@ namespace TextDongeon
         public void SetCharacterName()
         {
             string userName = "";
-            int choiceName = 0;
+            int userSelect = 0;
             Util util = new Util();
             character = new Character();
 
             Console.Clear();
             util.PrintWelcome();
-            Console.WriteLine("원하시는 이름을 설정해주세요.\n");
-            userName = Console.ReadLine().ToString();
-
-            Console.WriteLine($"입력하신 이름은 {userName}입니다.\n");
-            Console.WriteLine("1.저장");
-            Console.WriteLine("2.취소");
-            util.PrintUserChoice();
-
-            choiceName = util.UserSelectUtil(1, 2);
-            switch (choiceName)
+            if (File.Exists(filePath))
             {
-                case 1:
-                    SetCharacterClass(userName);
-                    break;
-                case 2:
-                    SetCharacterName();
-                    break;
+                Console.WriteLine("저장된 데이터가 존재합니다. 불러오시겠습니까?\n");
+                Console.WriteLine("1. 예");
+                Console.WriteLine("2. 아니오");
+                Console.WriteLine("");
+                util.PrintUserChoice();
+
+                userSelect = util.UserSelectUtil(1,2);
+                switch (userSelect)
+                {
+                    case 1:
+                        character = LoadData();
+                        SetShopItemList();
+                        break;
+                    case 2:
+                        File.Delete(filePath);
+                        SetCharacterName();
+                        break;
+                }
             }
+            else
+            {
+                Console.WriteLine("원하시는 이름을 설정해주세요.\n");
+                userName = Console.ReadLine().ToString();
+
+                Console.WriteLine($"입력하신 이름은 {userName}입니다.\n");
+                Console.WriteLine("1. 저장");
+                Console.WriteLine("2. 취소");
+                util.PrintUserChoice();
+
+                userSelect = util.UserSelectUtil(1, 2);
+                switch (userSelect)
+                {
+                    case 1:
+                        SetCharacterClass(userName);
+                        break;
+                    case 2:
+                        SetCharacterName();
+                        break;
+                }
+            }
+            
         }
 
         public void SetCharacterClass(string userName)
@@ -121,7 +162,7 @@ namespace TextDongeon
             userSelect = util.UserSelectUtil(1, classList.Length);
             character = new Character(userName, classList[userSelect - 1]);
 
-            MainMenuList();
+            SetShopItemList();
         }
 
         public void CheckStatus()
@@ -215,6 +256,7 @@ namespace TextDongeon
         {
             int userSelect = 0;
             int itemIndex = 0;
+
             Console.Clear();
             Console.WriteLine("인벤토리");
             Console.WriteLine("보유 중인 아이템을 관리할 수 있습니다.\n");
@@ -283,12 +325,39 @@ namespace TextDongeon
             }
         }
 
-        public void SetShopItemList(List<Item> items)
+        public void SetShopItemList()
         {
-            foreach (Item item in items)
+            string[] itemList = 
+            { 
+                "수련자 갑옷|방어력|+5|수련에 도움을 주는 갑옷입니다.|1000", 
+                "무쇠갑옷|방어력|+9|무쇠로 만들어져 튼튼한 갑옷입니다.|2000", 
+                "스파르타의 갑옷|방어력|+15|스파르타의 전사들이 사용했다는 전설의 갑옷입니다.|3500", 
+                "낡은 검|공격력|+2|쉽게 볼 수 있는 낡은 검 입니다.|600", 
+                "청동 도끼|공격력|+5|어디선가 사용됐던거 같은 도끼입니다.|1500", 
+                "스파르타의 창|공격력|+7|스파르타의 전사들이 사용했다는 전설의 창입니다.|2100", 
+                "나무몽둥이|공격력|+1|어디선가 본 기본 무기입니다.|300" 
+            };
+            List<Item> shopList = new List<Item>();
+            foreach (string itemStr in itemList)
             {
+                shopList.Add(new Item(itemStr));
+            }
+            foreach (Item item in shopList)
+            {
+                if (isLoad)
+                {
+                    for (int i = 0; i < character.Items.Count; i++)
+                    {
+                        if (character.Items[i].Name.Equals(item.Name))
+                        {
+                            item.isSold = true;
+                        }
+                    }
+                }
                 shopItems.Add(item);
             }
+
+            MainMenuList();
         }
 
         public void BuyItems(int buyStatus)
@@ -539,6 +608,40 @@ namespace TextDongeon
             {
                 MainMenuList();
             }
+        }
+
+        public void SaveData()
+        {
+            try
+            {
+                string json = JsonSerializer.Serialize(character, new JsonSerializerOptions
+                {
+                    WriteIndented = true
+                });
+                Directory.CreateDirectory(folderPath);
+
+                File.WriteAllText(filePath, json);
+                isSaved = true;
+                MainMenuList();
+            }
+            catch
+            {
+                isSaved = false;
+                MainMenuList();
+            }
+        }
+
+        public Character LoadData()
+        {
+            string jsonStr = File.ReadAllText(filePath);
+            Character character = JsonSerializer.Deserialize<Character>(jsonStr);
+            isLoad = true;
+            return character;
+        }
+
+        public void GameStart()
+        {
+            SetCharacterName();
         }
     }
 

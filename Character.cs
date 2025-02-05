@@ -10,8 +10,8 @@ namespace TextDongeon
     public class Character
     {
         public int Level { get; set; }
-        public string Name { get; private set; }
-        public string Class { get; private set; }
+        public string Name { get; set; }
+        public string Class { get; set; }
         public float AttackPower { get; set; }
         public float Defense { get; set; }
         public float Health { get; set; }
@@ -131,8 +131,8 @@ namespace TextDongeon
             {
                 DongeonClear = 0;
                 Level += 1;
-                AttackPower += (float)(0.5 * (Level - 1));
-                Defense += (Level - 1);
+                AttackPower += (float)0.5;
+                Defense += 1;
                 return true;
             }
             return false;
