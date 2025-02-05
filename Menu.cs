@@ -73,7 +73,7 @@ namespace TextDongeon
                             ShoppingWeapons();
                             break;
                         case 4:
-                            EnterDongeon();
+                            EnterDongeon(true);
                             break;
                         case 5:
                             RestCharacter(0);
@@ -191,7 +191,7 @@ namespace TextDongeon
                     }
                 }
 
-                Console.Write($"공격력 : {character.AttackPower + addAttackPower} ");
+                Console.Write($"공격력 : {character.AttackPower} ");
                 if (addAttackPower != 0)
                 {
                     Console.WriteLine($"({(addAttackPower > 0 ? "+" : "")}{addAttackPower})");
@@ -200,7 +200,7 @@ namespace TextDongeon
                 {
                     Console.WriteLine("");
                 }
-                Console.Write($"방어력 : {character.Defense + addDefense} ");
+                Console.Write($"방어력 : {character.Defense} ");
                 if (addDefense != 0)
                 {
                     Console.WriteLine($"({(addDefense > 0 ? "+" : "")}{addDefense})");
@@ -469,7 +469,8 @@ namespace TextDongeon
                     ShoppingWeapons();
                     break;
                 default :
-                    character.SellItem(character.Items[userSelect - 1]);
+                    character.SellItem(shopItems,character.Items[userSelect - 1]);
+                    
                     SellItems(true);
                     break;
             }
@@ -518,7 +519,7 @@ namespace TextDongeon
             }
         }
 
-        public void EnterDongeon()
+        public void EnterDongeon(bool canEnter)
         {
             int userSelect = 0;
             int dongeonCount = 0;
@@ -531,8 +532,15 @@ namespace TextDongeon
                 int difficultyArmer = difficultyLevel * 5 + (difficultyLevel - 1);
                 Console.WriteLine($"{++dongeonCount}. {util.DifficultyToKorean(enumName)} 던전     | 방어력 {difficultyArmer} 이상 권장");
             }
-            Console.WriteLine("0. 나가기");
+
+            if (!canEnter)
+            {
+                Console.WriteLine("");
+                Console.WriteLine("현재 플레이어의 체력이 없어 던전에 들어가실 수 없습니다.");
+                Console.WriteLine("회복 후 이용 바랍니다.");
+            }
             Console.WriteLine("");
+            Console.WriteLine("0. 나가기");
             util.PrintUserChoice();
 
             userSelect = util.UserSelectUtil(0,dongeonCount);
@@ -541,7 +549,14 @@ namespace TextDongeon
                 MainMenuList();
             }else
             {
-                IsDongeonClear(userSelect);
+                if (character.Health <= 0)
+                {
+                    EnterDongeon(false);
+                }
+                else
+                {
+                    IsDongeonClear(userSelect);
+                }
             }
         }
 
@@ -653,20 +668,6 @@ namespace TextDongeon
             Character character = JsonSerializer.Deserialize<Character>(jsonStr);
             isLoad = true;
             return character;
-        }
-
-        public void Enforcement()
-        {
-            int userSelect = 0;
-            Console.Clear();
-            Console.WriteLine("아이템 강화");
-            Console.WriteLine("이 곳은 아이템을 강화하는 장소입니다.\n");
-            Console.WriteLine("1. 강화");
-            Console.WriteLine("0. 나가기");
-
-            Console.WriteLine("");
-            util.PrintUserChoice();
-
         }
 
         public void GameStart()

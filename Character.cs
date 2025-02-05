@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace TextDongeon
 {
@@ -48,8 +49,8 @@ namespace TextDongeon
 
         public void RemoveItem(Item item)
         {
+            item.IsSold = false;
             item.IsEquip = false;
-            item.isSold = false;
             Items.Remove(item);
         }
 
@@ -59,7 +60,7 @@ namespace TextDongeon
             {
                 Gold -= item.Price;
                 Additem(item);
-                item.isSold = true;
+                item.IsSold = true;
                 return true;
             }else
             {
@@ -67,9 +68,17 @@ namespace TextDongeon
             }
         }
         //판매기능은 도전기능에서 구현하기
-        public void SellItem(Item item)
+        public void SellItem(List<Item> shopList, Item item)
         {
             Gold += (float)(item.Price * 0.85);
+            foreach (Item shopItem in shopList)
+            {
+                if (shopItem.Name.Contains(item.Name))
+                {
+                    shopItem.IsSold = false;
+                }
+            }
+            UnEquipItem(item);
             RemoveItem(item);
         }
 
@@ -84,6 +93,7 @@ namespace TextDongeon
                     if (weapon.IsEquip && weapon.Type.Equals("공격력"))
                     {
                         weapon.IsEquip = false;
+                        AttackPower -= weapon.Stat;
                     }
                 }
                 AttackPower += item.Stat;
@@ -94,6 +104,7 @@ namespace TextDongeon
                     if (armer.IsEquip && armer.Type.Equals("방어력"))
                     {
                         armer.IsEquip = false;
+                        Defense -= armer.Stat;
                     }
                 }
                 Defense += item.Stat;
@@ -146,6 +157,10 @@ namespace TextDongeon
             else
             {
                 Health -= random.Next(20 - ((int)Defense - recommandArmer), 36 - ((int)Defense - recommandArmer));
+                if(Health < 0)
+                {
+                    Health = 0;
+                }
             }
             return Health;
         }
