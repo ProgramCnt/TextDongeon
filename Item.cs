@@ -14,12 +14,13 @@ namespace TextDongeon
         public string Description { get; set; }
         public int Price { get; set; }
         public bool IsEquip { get; set; }
-        public bool isSold { get; set; }
+        public bool IsSold { get; set; }
 
         public Item()
         {
             
         }
+
         public Item(string name, string description, string type, int stat, int price)
         {
             Name = name;
@@ -28,7 +29,7 @@ namespace TextDongeon
             Description = description;
             Price = price;
             IsEquip = false;
-            isSold = false;
+            IsSold = false;
         }
 
         public Item(string itemInfo)
@@ -42,7 +43,7 @@ namespace TextDongeon
                 Description = itemInfos[3];
                 Price = int.Parse(itemInfos[4]);
                 IsEquip = false;
-                isSold = false;
+                IsSold = false;
             }
             else
             {

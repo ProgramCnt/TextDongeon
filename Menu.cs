@@ -318,7 +318,7 @@ namespace TextDongeon
             foreach (Item item in shopItems)
             {
                 string status = util.ItemStatUtil(item);
-                Console.WriteLine($" - {item.Name,-8} | {item.Type} {status} | {item.Description,-30} | {(item.isSold ? "구매완료" : item.Price + " G")}");
+                Console.WriteLine($" - {item.Name,-8} | {item.Type} {status} | {item.Description,-30} | {(item.IsSold ? "구매완료" : item.Price + " G")}");
             }
             Console.WriteLine("");
             Console.WriteLine("1. 아이템 구매");
@@ -366,7 +366,7 @@ namespace TextDongeon
                     {
                         if (character.Items[i].Name.Equals(item.Name))
                         {
-                            item.isSold = true;
+                            item.IsSold = true;
                         }
                     }
                 }
@@ -390,7 +390,7 @@ namespace TextDongeon
             foreach (Item item in shopItems)
             {
                 string status = util.ItemStatUtil(item);
-                Console.WriteLine($" - {++itemCount} {item.Name,-8} | {item.Type} {status} | {item.Description,-30} | {(item.isSold ? "구매완료" : item.Price + " G")}");
+                Console.WriteLine($" - {++itemCount} {item.Name,-8} | {item.Type} {status} | {item.Description,-30} | {(item.IsSold ? "구매완료" : item.Price + " G")}");
             }
             Console.WriteLine("");
             Console.WriteLine("0. 나가기");
@@ -420,7 +420,7 @@ namespace TextDongeon
             }
             else if (userSelect <= shopItems.Count)
             {
-                if (shopItems[userSelect - 1].isSold)
+                if (shopItems[userSelect - 1].IsSold)
                 {
                     BuyItems(3);
                 }
@@ -653,6 +653,20 @@ namespace TextDongeon
             Character character = JsonSerializer.Deserialize<Character>(jsonStr);
             isLoad = true;
             return character;
+        }
+
+        public void Enforcement()
+        {
+            int userSelect = 0;
+            Console.Clear();
+            Console.WriteLine("아이템 강화");
+            Console.WriteLine("이 곳은 아이템을 강화하는 장소입니다.\n");
+            Console.WriteLine("1. 강화");
+            Console.WriteLine("0. 나가기");
+
+            Console.WriteLine("");
+            util.PrintUserChoice();
+
         }
 
         public void GameStart()
